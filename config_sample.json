@@ -1,0 +1,7 @@
+{
+  "backyard": {
+    "dest_folder_id": "<google drive folder id>",
+    "path": "rtsp://192.168.1.5:554",
+    "fps": 4
+  }
+}
