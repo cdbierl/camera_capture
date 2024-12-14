@@ -15,8 +15,8 @@ SCOPES = ["https://www.googleapis.com/auth/drive.file"]
 def upload_file(
     service,
     filepath: str,
-    filename: str,
     folder_id: str,
+    filename: str,
     mimetype: str,
     overwrite=False,
 ) -> str:
@@ -80,7 +80,7 @@ def main():
         uploads = 0
 
         while True:
-            time.sleep(0.5)
+            time.sleep(args.interval)
 
             if not os.path.exists(args.filepath):
                 print("Waiting for file to exist...")
@@ -89,8 +89,8 @@ def main():
             upload_file(
                 service,
                 filepath=args.filepath,
-                filename=args.filename,
                 folder_id=args.folder_id,
+                filename=args.filename,
                 mimetype=args.mime_type,
                 overwrite=True,
             )
@@ -107,7 +107,18 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser("sample_upload")
     parser.add_argument(
-        "--filepath", help="Path to file", type=str, action="store", required=True
+        "--interval",
+        help="Upload interval (seconds)",
+        type=float,
+        action="store",
+        default=1.0,
+    )
+    parser.add_argument(
+        "--filepath",
+        help="Path to file",
+        type=str,
+        action="store",
+        required=True,
     )
     parser.add_argument(
         "--filename",

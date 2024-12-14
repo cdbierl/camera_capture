@@ -3,7 +3,7 @@ trap 'kill $(jobs -p) 2>/dev/null' EXIT
 
 app_home=/tmp/image-capture
 source_name=$1
-sources_cfg=$2
+sources_cfg=${2:-config.json}
 
 if [ -z ${source_name} ]; then
   echo "Please specify a source name (used for uploaded image filename.)"
@@ -11,7 +11,7 @@ if [ -z ${source_name} ]; then
 fi
 
 if [ -z ${sources_cfg} ]; then
-  echo "Please specify a source config json file."
+  echo "Please specify a sources config.json file."
   exit 1
 fi
 
@@ -19,7 +19,6 @@ if [ ! -f ${sources_cfg} ]; then
   echo "Sources config file does not exist!"
   exit 1
 fi
-
 
 dest_folder_id=$(jq -r .${source_name}.dest_folder_id ${sources_cfg})
 if [ -z ${dest_folder_id} ]; then
@@ -40,16 +39,18 @@ img_dir=${app_home}/${source_name}
 rm -rf ${img_dir}
 mkdir -p ${img_dir}
 
-extra_args=
+extra_args="-hide_banner -loglevel error -nostdin"
 if [ -f ${source_path} ]; then
-  extra_args=" -stream_loop -1 "
+  extra_args="${extra_args} -stream_loop -1 "
 fi
 
 filepath=${img_dir}/capture.jpg
 
-ffmpeg ${extra_args} -nostdin -rtsp_transport tcp -i ${source_path} -r ${fps} -update 1 ${filepath} &
+ffmpeg ${extra_args} -rtsp_transport tcp -i ${source_path} -r ${fps} -update 1 ${filepath} &
 
-python drive_upload.py --folder-id ${dest_folder_id} --filename ${source_name}.jpg --filepath ${filepath}
+python -u drive_upload.py \
+  --folder-id ${dest_folder_id} \
+  --filename ${source_name}.jpg \
+  --filepath ${filepath}
 
 exit 0
-

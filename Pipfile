@@ -13,3 +13,6 @@ google-auth-oauthlib = "*"
 [requires]
 python_version = "3.11"
 python_full_version = "3.11.2"
+
+[scripts]
+camera-capture-backyard = "./camera_capture.sh backyard"

@@ -1,0 +1,16 @@
+[Unit]
+Description=Camera Capture Service for %i Feed
+After=syslog.target network.target remote-fs.target nss-lookup.target network-online.target
+Requires=network-online.target
+
+[Service]
+Type=simple
+User=admin
+WorkingDirectory=/home/admin/Projects/camera-capture
+ExecStart=/bin/bash --login -c "pipenv run camera-capture-%i"
+Restart=on-failure
+RestartSec=5
+IgnoreSIGPIPE=No
+
+[Install]
+WantedBy=multi-user.target
